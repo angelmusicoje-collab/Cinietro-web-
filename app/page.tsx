@@ -10,6 +10,15 @@ const CEMETERY_POSTER =
   "https://images.pexels.com/videos/7029579/cemetery-dead-death-fog-7029579.jpeg?auto=compress&cs=tinysrgb&w=1800";
 
 type Award = "first" | "second" | "third" | "mention" | null;
+type FestivalPhase = "prelaunch" | "submissions" | "results";
+
+// Cambiar a "submissions" al publicar los cortos y a "results" al anunciar el palmarés.
+const festival: { phase: FestivalPhase } = {
+  phase: "prelaunch",
+};
+
+const hasPublishedSubmissions = festival.phase !== "prelaunch";
+const hasPublishedResults = festival.phase === "results";
 
 type Film = {
   id: number;
@@ -23,28 +32,28 @@ const films: Film[] = [
     id: 1,
     image:
       "https://images.pexels.com/photos/158163/clouds-cloudporn-weather-lookup-158163.jpeg?auto=compress&cs=tinysrgb&w=720",
-    award: "first",
+    award: null,
     tone: "blue",
   },
   {
     id: 2,
     image:
       "https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg?auto=compress&cs=tinysrgb&w=720",
-    award: "second",
+    award: null,
     tone: "red",
   },
   {
     id: 3,
     image:
       "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg?auto=compress&cs=tinysrgb&w=720",
-    award: "third",
+    award: null,
     tone: "forest",
   },
   {
     id: 4,
     image:
       "https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=720",
-    award: "mention",
+    award: null,
     tone: "violet",
   },
   {
@@ -66,6 +75,13 @@ const awardLabels: Record<Exclude<Award, null>, string> = {
   first: "GANADORA · PRIMER LUGAR",
   second: "GANADORA · SEGUNDO LUGAR",
   third: "GANADORA · TERCER LUGAR",
+  mention: "MENCIÓN ESPECIAL",
+};
+
+const awardCategoryLabels: Record<Exclude<Award, null>, string> = {
+  first: "PRIMER LUGAR",
+  second: "SEGUNDO LUGAR",
+  third: "TERCER LUGAR",
   mention: "MENCIÓN ESPECIAL",
 };
 
@@ -261,8 +277,11 @@ function FilmCard({ film, onOpen }: { film: Film; onOpen: (film: Film) => void }
           ) : null}
           <span className="film-card__shade" />
           <span className="film-card__brand" aria-hidden="true">C</span>
+          {!hasPublishedSubmissions ? (
+            <span className="film-card__placeholder">INSERTAR TRÁILER</span>
+          ) : null}
           <span className="film-card__poster-title">INSERTAR TÍTULO</span>
-          {film.award ? (
+          {hasPublishedResults && film.award ? (
             <span className={`award award--${film.award}`}>
               <span aria-hidden="true">✦</span> {awardLabels[film.award]}
             </span>
@@ -346,7 +365,7 @@ function TrailerModal({ film, onClose }: { film: Film; onClose: () => void }) {
           preload="metadata"
         />
         <div className="trailer-modal__content">
-          {film.award ? (
+          {hasPublishedResults && film.award ? (
             <p className={`trailer-modal__award award--${film.award}`}>
               ✦ {awardLabels[film.award]}
             </p>
@@ -413,6 +432,8 @@ export default function Home() {
     if (activeFilter === "mentions") return film.award === "mention";
     return true;
   });
+  const awardedFilms = films.filter((film) => film.award !== null);
+  const hasAwardedFilms = hasPublishedResults && awardedFilms.length > 0;
 
   return (
     <main className="festival-shell">
@@ -466,8 +487,11 @@ export default function Home() {
           <p className="hero__subtitle">CINE DE TERROR</p>
           <div className="hero__description">INSERTAR TEXTO</div>
           <div className="hero__actions">
-            <a className="button button--primary" href="#seleccion">
-              <PlayIcon filled /> VER SELECCIÓN
+            <a
+              className="button button--primary"
+              href={hasPublishedSubmissions ? "#seleccion" : "#convocatoria"}
+            >
+              <PlayIcon filled /> {hasPublishedSubmissions ? "VER SELECCIÓN" : "VER CONVOCATORIA"}
             </a>
             <a className="button button--ghost" href="#festival">INSERTAR TEXTO</a>
           </div>
@@ -481,27 +505,31 @@ export default function Home() {
       <div className="streaming-shelf">
         <section className="catalog catalog--primary" id="seleccion">
           <div className="section-heading section-heading--primary">
-            <h2>Selección oficial</h2>
-            <div className="catalog-filters" role="group" aria-label="Filtrar selección oficial">
-              <button
-                className={activeFilter === "all" ? "catalog-filters__active" : ""}
-                onClick={() => setActiveFilter("all")}
-              >
-                TODOS
-              </button>
-              <button
-                className={activeFilter === "awarded" ? "catalog-filters__active" : ""}
-                onClick={() => setActiveFilter("awarded")}
-              >
-                PREMIADAS
-              </button>
-              <button
-                className={activeFilter === "mentions" ? "catalog-filters__active" : ""}
-                onClick={() => setActiveFilter("mentions")}
-              >
-                MENCIONES
-              </button>
-            </div>
+            <h2>{hasPublishedSubmissions ? "Selección oficial" : "Próximos cortometrajes"}</h2>
+            {hasAwardedFilms ? (
+              <div className="catalog-filters" role="group" aria-label="Filtrar selección oficial">
+                <button
+                  className={activeFilter === "all" ? "catalog-filters__active" : ""}
+                  onClick={() => setActiveFilter("all")}
+                >
+                  TODOS
+                </button>
+                <button
+                  className={activeFilter === "awarded" ? "catalog-filters__active" : ""}
+                  onClick={() => setActiveFilter("awarded")}
+                >
+                  PREMIADAS
+                </button>
+                <button
+                  className={activeFilter === "mentions" ? "catalog-filters__active" : ""}
+                  onClick={() => setActiveFilter("mentions")}
+                >
+                  MENCIONES
+                </button>
+              </div>
+            ) : !hasPublishedSubmissions ? (
+              <p className="catalog-status"><span aria-hidden="true" /> PRÓXIMAMENTE</p>
+            ) : null}
           </div>
 
           <div className="film-rail-wrap">
@@ -527,7 +555,7 @@ export default function Home() {
 
         <section className="catalog catalog--discoveries" id="avances">
           <div className="section-heading">
-            <h2>Avances 2026</h2>
+            <h2>{hasPublishedSubmissions ? "Avances 2026" : "Tráileres por recibir"}</h2>
           </div>
           <div className="film-rail-wrap">
             <div className="film-rail" ref={discoveriesRef}>
@@ -550,32 +578,34 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="catalog catalog--awards" id="destacadas">
-          <div className="section-heading">
-            <h2>Ganadoras y menciones</h2>
-          </div>
-          <div className="film-rail-wrap">
-            <div className="film-rail" ref={awardsRailRef}>
-              {films.filter((film) => film.award !== null).map((film) => (
-                <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />
-              ))}
+        {hasAwardedFilms ? (
+          <section className="catalog catalog--awards" id="destacadas">
+            <div className="section-heading">
+              <h2>Ganadoras y menciones</h2>
             </div>
-            <button
-              className="rail-arrow rail-arrow--left"
-              onClick={() => moveRail(-1, awardsRailRef)}
-              aria-label="Desplazar ganadoras hacia la izquierda"
-            >
-              <ArrowIcon backwards />
-            </button>
-            <button
-              className="rail-arrow rail-arrow--right"
-              onClick={() => moveRail(1, awardsRailRef)}
-              aria-label="Desplazar ganadoras hacia la derecha"
-            >
-              <ArrowIcon />
-            </button>
-          </div>
-        </section>
+            <div className="film-rail-wrap">
+              <div className="film-rail" ref={awardsRailRef}>
+                {awardedFilms.map((film) => (
+                  <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />
+                ))}
+              </div>
+              <button
+                className="rail-arrow rail-arrow--left"
+                onClick={() => moveRail(-1, awardsRailRef)}
+                aria-label="Desplazar ganadoras hacia la izquierda"
+              >
+                <ArrowIcon backwards />
+              </button>
+              <button
+                className="rail-arrow rail-arrow--right"
+                onClick={() => moveRail(1, awardsRailRef)}
+                aria-label="Desplazar ganadoras hacia la derecha"
+              >
+                <ArrowIcon />
+              </button>
+            </div>
+          </section>
+        ) : null}
       </div>
 
       <section className="feature" id="festival">
@@ -613,25 +643,39 @@ export default function Home() {
         <div className="palmares__heading">
           <p className="eyebrow"><span /> DISTINCIONES</p>
           <h2>PALMARÉS <span>2026</span></h2>
-          <p>INSERTAR TEXTO</p>
+          <p>{hasAwardedFilms ? "INSERTAR TEXTO" : "RESULTADOS POR ANUNCIAR"}</p>
         </div>
         <div className="podium">
-          {podiumAwards.map((award, index) => (
-            <button
-              className={`podium__item podium__item--${award}`}
-              key={award}
-              onClick={() => setSelectedFilm(films[index])}
-            >
-              <span className="podium__number">0{index + 1}</span>
-              <span className="podium__laurels" aria-hidden="true">❧</span>
-              <span className={`podium__award podium__award--${award}`}>
-                {awardLabels[award]}
-              </span>
-              <span className="podium__title">INSERTAR TÍTULO</span>
-              <span className="podium__subtitle">INSERTAR TEXTO</span>
-              <span className="podium__arrow">↗</span>
-            </button>
-          ))}
+          {podiumAwards.map((award, index) => {
+            const awardedFilm = hasPublishedResults
+              ? films.find((film) => film.award === award)
+              : undefined;
+
+            return (
+              <button
+                className={`podium__item podium__item--${award}`}
+                key={award}
+                onClick={() => {
+                  if (awardedFilm) setSelectedFilm(awardedFilm);
+                }}
+                disabled={!awardedFilm}
+                aria-label={`${awardCategoryLabels[award]}: ${awardedFilm ? "INSERTAR TÍTULO" : "por anunciar"}`}
+              >
+                <span className="podium__number">0{index + 1}</span>
+                <span className="podium__laurels" aria-hidden="true">❧</span>
+                <span className={`podium__award podium__award--${award}`}>
+                  {awardedFilm ? awardLabels[award] : awardCategoryLabels[award]}
+                </span>
+                <span className={`podium__title ${awardedFilm ? "" : "podium__title--pending"}`}>
+                  {awardedFilm ? "INSERTAR TÍTULO" : "POR ANUNCIAR"}
+                </span>
+                <span className="podium__subtitle">
+                  {awardedFilm ? "INSERTAR TEXTO" : "RESULTADO PENDIENTE"}
+                </span>
+                {awardedFilm ? <span className="podium__arrow">↗</span> : null}
+              </button>
+            );
+          })}
         </div>
       </section>
 
