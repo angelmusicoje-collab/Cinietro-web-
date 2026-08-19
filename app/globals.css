@@ -120,6 +120,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
 }
 .catalog-filters button:hover { color: #fff; }
 .catalog-filters button.catalog-filters__active { border-bottom-color: var(--cyan); color: var(--cyan); }
+.catalog-status { display: flex; align-items: center; gap: 8px; margin: 0; color: #a5a8ad; font-size: 9px; font-weight: 700; letter-spacing: 1px; }
+.catalog-status > span { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 11px rgba(21,204,222,.48); }
 
 .film-rail-wrap { position: relative; }
 .film-rail {
@@ -188,6 +190,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
   line-height: 1;
   text-shadow: 0 1px 5px rgba(0,0,0,.7);
 }
+.film-card__placeholder { position: absolute; top: 8px; right: 8px; border: 1px solid rgba(21,204,222,.46); border-radius: 999px; padding: 5px 7px; background: rgba(4,14,16,.78); color: #b9f4f0; font-size: 8px; font-weight: 750; letter-spacing: .35px; }
 .film-card__poster-title {
   position: absolute;
   left: 10px;
@@ -308,6 +311,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
 .podium__item { position: relative; display: flex; min-height: 268px; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 0; background: rgba(8,10,12,.6); color: var(--white); cursor: pointer; transition: background 200ms ease; }
 .podium__item + .podium__item { border-left: 1px solid #24262a; }
 .podium__item:hover { background: #12161b; }
+.podium__item:disabled { cursor: default; }
+.podium__item:disabled:hover { background: rgba(8,10,12,.6); }
+.podium__item:disabled .podium__laurels { opacity: .78; }
 .podium__number { position: absolute; top: 18px; left: 18px; color: #777980; font-size: 9px; }
 .podium__laurels { margin-bottom: 4px; font-size: 46px; line-height: 1; }
 .podium__item--first .podium__laurels, .podium__award--first { color: #e8be71; }
@@ -316,6 +322,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
 .podium__item--mention .podium__laurels, .podium__award--mention { color: var(--cyan); }
 .podium__award { padding: 0 8px; font-size: 8px; font-weight: 750; letter-spacing: .55px; }
 .podium__title { margin-top: 4px; font-size: 11px; font-weight: 700; letter-spacing: .65px; }
+.podium__title--pending { color: #e1e3e6; }
 .podium__subtitle { color: #85878d; font-size: 9px; letter-spacing: 1px; }
 .podium__arrow { position: absolute; right: 17px; bottom: 14px; color: #73767a; }
 
@@ -424,6 +431,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
   .section-heading { min-height: 26px; gap: 10px; padding-inline: 18px; margin-bottom: 8px; }
   .section-heading h2 { font-size: 17px; }
   .section-heading--primary { display: block; }
+  .catalog-status { min-height: 25px; margin-top: 6px; font-size: 8px; }
   .catalog-filters { gap: 7px; overflow-x: auto; margin-top: 9px; padding-bottom: 1px; scrollbar-width: none; }
   .catalog-filters::-webkit-scrollbar { display: none; }
   .catalog-filters button {
@@ -447,6 +455,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-
   .rail-arrow { width: 18px; height: clamp(104px, 29.25vw, 133px); }
   .rail-arrow svg { width: 19px; height: 19px; }
   .film-card__brand { left: 9px; top: 6px; font-size: 21px; }
+  .film-card__placeholder { top: 7px; right: 7px; padding: 4px 6px; }
   .film-card__poster-title { left: 9px; font-size: 10px; }
   .film-card__cover:has(.award) .film-card__poster-title { bottom: 31px; }
   .award { padding: 6px 2px; font-size: 8px; letter-spacing: .15px; white-space: nowrap; }
