@@ -123,11 +123,31 @@ function PlusIcon() {
 }
 
 function FilmCard({ film, onOpen }: { film: Film; onOpen: (film: Film) => void }) {
+  const [previewing, setPreviewing] = useState(false);
+  const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const startPreview = () => {
+    previewTimer.current = setTimeout(() => setPreviewing(true), 320);
+  };
+
+  const stopPreview = () => {
+    if (previewTimer.current) clearTimeout(previewTimer.current);
+    setPreviewing(false);
+  };
+
+  useEffect(() => () => {
+    if (previewTimer.current) clearTimeout(previewTimer.current);
+  }, []);
+
   return (
     <article className={`film-card film-card--${film.tone}`}>
       <button
         className="film-card__cover"
         onClick={() => onOpen(film)}
+        onMouseEnter={startPreview}
+        onMouseLeave={stopPreview}
+        onFocus={startPreview}
+        onBlur={stopPreview}
         aria-label={`Ver avance de insertar título ${film.id}`}
       >
         <Image
@@ -137,6 +157,17 @@ function FilmCard({ film, onOpen }: { film: Film; onOpen: (film: Film) => void }
           height={625}
           unoptimized
         />
+        {previewing ? (
+          <video
+            className="film-card__preview"
+            src={TRAILER_VIDEO}
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+          />
+        ) : null}
         <span className="film-card__shade" />
         <span className="film-card__placeholder">INSERTAR IMAGEN</span>
         <span className="film-card__play">
