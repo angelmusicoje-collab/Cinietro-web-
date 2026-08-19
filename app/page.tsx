@@ -22,28 +22,28 @@ const films: Film[] = [
   {
     id: 1,
     image:
-      "https://images.pexels.com/photos/158163/clouds-cloudporn-weather-lookup-158163.jpeg?auto=compress&cs=tinysrgb&w=1000",
+      "https://images.pexels.com/photos/158163/clouds-cloudporn-weather-lookup-158163.jpeg?auto=compress&cs=tinysrgb&w=720",
     award: "first",
     tone: "blue",
   },
   {
     id: 2,
     image:
-      "https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg?auto=compress&cs=tinysrgb&w=1000",
+      "https://images.pexels.com/photos/167092/pexels-photo-167092.jpeg?auto=compress&cs=tinysrgb&w=720",
     award: "second",
     tone: "red",
   },
   {
     id: 3,
     image:
-      "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg?auto=compress&cs=tinysrgb&w=1000",
+      "https://images.pexels.com/photos/414171/pexels-photo-414171.jpeg?auto=compress&cs=tinysrgb&w=720",
     award: "third",
     tone: "forest",
   },
   {
     id: 4,
     image:
-      "https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=1000",
+      "https://images.pexels.com/photos/1169754/pexels-photo-1169754.jpeg?auto=compress&cs=tinysrgb&w=720",
     award: "mention",
     tone: "violet",
   },
@@ -56,7 +56,7 @@ const films: Film[] = [
   {
     id: 6,
     image:
-      "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=1000",
+      "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&w=720",
     award: null,
     tone: "red",
   },
@@ -122,12 +122,95 @@ function PlusIcon() {
   );
 }
 
+function ThumbIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+      <path
+        d="M7 10v10H4V10h3Zm0 10h9.2a2 2 0 0 0 1.96-1.6l1.2-6A2 2 0 0 0 17.4 10H13V6.6a2.1 2.1 0 0 0-1.8-2.08L7 10"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function DownIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+      <path
+        d="m6 9 6 6 6-6"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function HomeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+      <path
+        d="m3.5 10 8.5-7 8.5 7v9.5h-6v-6h-5v6h-6V10Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function FilmsIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+      <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
+      <path d="m10 9 5 3-5 3V9Z" fill="currentColor" />
+    </svg>
+  );
+}
+
+function FestivalIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+      <path
+        d="M4 8.5h16v11H4v-11Zm0 0 2-4h15l-2 4M9 4.5 7 8.5m7-4-2 4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function TrophyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none">
+      <path
+        d="M7 4h10v5a5 5 0 0 1-10 0V4Zm0 2H4v2a4 4 0 0 0 4 4m9-6h3v2a4 4 0 0 1-4 4m-4 2v4m-4 2h8"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 function FilmCard({ film, onOpen }: { film: Film; onOpen: (film: Film) => void }) {
   const [previewing, setPreviewing] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [liked, setLiked] = useState(false);
   const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startPreview = () => {
-    previewTimer.current = setTimeout(() => setPreviewing(true), 320);
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (previewTimer.current) clearTimeout(previewTimer.current);
+    previewTimer.current = setTimeout(() => setPreviewing(true), 260);
   };
 
   const stopPreview = () => {
@@ -140,58 +223,92 @@ function FilmCard({ film, onOpen }: { film: Film; onOpen: (film: Film) => void }
   }, []);
 
   return (
-    <article className={`film-card film-card--${film.tone}`}>
-      <button
-        className="film-card__cover"
-        onClick={() => onOpen(film)}
-        onMouseEnter={startPreview}
-        onMouseLeave={stopPreview}
-        onFocus={startPreview}
-        onBlur={stopPreview}
-        aria-label={`Ver avance de insertar título ${film.id}`}
-      >
-        <Image
-          src={film.image}
-          alt="INSERTAR IMAGEN"
-          width={1000}
-          height={625}
-          unoptimized
-        />
-        {previewing ? (
-          <video
-            className="film-card__preview"
-            src={TRAILER_VIDEO}
-            autoPlay
-            muted
-            loop
-            playsInline
-            aria-hidden="true"
-          />
-        ) : null}
-        <span className="film-card__shade" />
-        <span className="film-card__placeholder">INSERTAR IMAGEN</span>
-        <span className="film-card__play">
-          <PlayIcon filled />
-        </span>
-        {film.award ? (
-          <span className={`award award--${film.award}`}>
-            <span aria-hidden="true">✦</span> {awardLabels[film.award]}
-          </span>
-        ) : null}
-      </button>
-      <div className="film-card__body">
-        <div>
-          <p className="film-card__number">0{film.id}</p>
-          <h3>INSERTAR TÍTULO</h3>
-          <p className="film-card__meta">INSERTAR TEXTO · INSERTAR TEXTO</p>
-        </div>
+    <article
+      className={`film-card film-card--${film.tone}`}
+      onMouseEnter={startPreview}
+      onMouseLeave={stopPreview}
+      onFocusCapture={startPreview}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) stopPreview();
+      }}
+    >
+      <div className={`film-card__shell ${previewing ? "film-card__shell--previewing" : ""}`}>
         <button
-          className="film-card__more"
+          className="film-card__cover"
           onClick={() => onOpen(film)}
-          aria-label={`Abrir detalles del avance ${film.id}`}
+          aria-label={`Ver avance de insertar título ${film.id}`}
         >
-          <PlusIcon />
+          <Image
+            src={film.image}
+            alt="INSERTAR IMAGEN"
+            width={1000}
+            height={563}
+            sizes="(max-width: 760px) 54vw, 19vw"
+            decoding="async"
+            unoptimized
+          />
+          {previewing ? (
+            <video
+              className="film-card__preview"
+              src={TRAILER_VIDEO}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+            />
+          ) : null}
+          <span className="film-card__shade" />
+          <span className="film-card__brand" aria-hidden="true">C</span>
+          <span className="film-card__poster-title">INSERTAR TÍTULO</span>
+          {film.award ? (
+            <span className={`award award--${film.award}`}>
+              <span aria-hidden="true">✦</span> {awardLabels[film.award]}
+            </span>
+          ) : null}
         </button>
+
+        <div className="film-card__body">
+          <div className="film-card__controls">
+            <button
+              className="film-card__control film-card__control--play"
+              onClick={() => onOpen(film)}
+              aria-label={`Reproducir avance ${film.id}`}
+            >
+              <PlayIcon filled />
+            </button>
+            <button
+              className={`film-card__control ${saved ? "film-card__control--active" : ""}`}
+              onClick={() => setSaved((current) => !current)}
+              aria-label={saved ? "Quitar de mi lista" : "Añadir a mi lista"}
+              aria-pressed={saved}
+            >
+              <PlusIcon />
+            </button>
+            <button
+              className={`film-card__control ${liked ? "film-card__control--active" : ""}`}
+              onClick={() => setLiked((current) => !current)}
+              aria-label={liked ? "Quitar valoración" : "Marcar como me gusta"}
+              aria-pressed={liked}
+            >
+              <ThumbIcon />
+            </button>
+            <button
+              className="film-card__control film-card__control--details"
+              onClick={() => onOpen(film)}
+              aria-label={`Ver detalles del avance ${film.id}`}
+            >
+              <DownIcon />
+            </button>
+          </div>
+          <h3>INSERTAR TÍTULO</h3>
+          <div className="film-card__facts">
+            <span>INSERTAR TEXTO</span>
+            <span>INSERTAR TEXTO</span>
+          </div>
+          <p className="film-card__meta">INSERTAR TEXTO <i /> INSERTAR TEXTO</p>
+        </div>
       </div>
     </article>
   );
@@ -226,6 +343,7 @@ function TrailerModal({ film, onClose }: { film: Film; onClose: () => void }) {
           controls
           autoPlay
           playsInline
+          preload="metadata"
         />
         <div className="trailer-modal__content">
           {film.award ? (
@@ -245,9 +363,43 @@ function TrailerModal({ film, onClose }: { film: Film; onClose: () => void }) {
 export default function Home() {
   const [selectedFilm, setSelectedFilm] = useState<Film | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("inicio");
   const [activeFilter, setActiveFilter] = useState<"all" | "awarded" | "mentions">("all");
   const railRef = useRef<HTMLDivElement>(null);
   const discoveriesRef = useRef<HTMLDivElement>(null);
+  const awardsRailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const sectionIds = ["inicio", "seleccion", "festival", "palmares"];
+    let animationFrame = 0;
+
+    const updateActiveSection = () => {
+      animationFrame = 0;
+      const threshold = window.innerHeight * 0.42;
+      let currentSection = "inicio";
+
+      sectionIds.forEach((sectionId) => {
+        const section = document.getElementById(sectionId);
+        if (section && section.getBoundingClientRect().top <= threshold) {
+          currentSection = sectionId;
+        }
+      });
+
+      setActiveSection(currentSection);
+    };
+
+    const handleScroll = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(updateActiveSection);
+    };
+
+    updateActiveSection();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+    };
+  }, []);
 
   const moveRail = (direction: number, rail = railRef) => {
     rail.current?.scrollBy({
@@ -300,6 +452,7 @@ export default function Home() {
           muted
           loop
           playsInline
+          preload="metadata"
           aria-hidden="true"
         />
         <div className="hero__veil" />
@@ -325,48 +478,105 @@ export default function Home() {
         <p className="hero__year">2026</p>
       </section>
 
-      <section className="catalog" id="seleccion">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow"><span /> CATÁLOGO</p>
-            <h2>SELECCIÓN <span>OFICIAL</span></h2>
+      <div className="streaming-shelf">
+        <section className="catalog catalog--primary" id="seleccion">
+          <div className="section-heading section-heading--primary">
+            <h2>Selección oficial</h2>
+            <div className="catalog-filters" role="group" aria-label="Filtrar selección oficial">
+              <button
+                className={activeFilter === "all" ? "catalog-filters__active" : ""}
+                onClick={() => setActiveFilter("all")}
+              >
+                TODOS
+              </button>
+              <button
+                className={activeFilter === "awarded" ? "catalog-filters__active" : ""}
+                onClick={() => setActiveFilter("awarded")}
+              >
+                PREMIADAS
+              </button>
+              <button
+                className={activeFilter === "mentions" ? "catalog-filters__active" : ""}
+                onClick={() => setActiveFilter("mentions")}
+              >
+                MENCIONES
+              </button>
+            </div>
           </div>
-          <div className="section-heading__actions">
-            <span>INSERTAR TEXTO</span>
-            <button onClick={() => moveRail(-1)} aria-label="Desplazar películas hacia la izquierda">
+
+          <div className="film-rail-wrap">
+            <div className="film-rail" ref={railRef}>
+              {visibleFilms.map((film) => <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />)}
+            </div>
+            <button
+              className="rail-arrow rail-arrow--left"
+              onClick={() => moveRail(-1)}
+              aria-label="Desplazar películas hacia la izquierda"
+            >
               <ArrowIcon backwards />
             </button>
-            <button onClick={() => moveRail(1)} aria-label="Desplazar películas hacia la derecha">
+            <button
+              className="rail-arrow rail-arrow--right"
+              onClick={() => moveRail(1)}
+              aria-label="Desplazar películas hacia la derecha"
+            >
               <ArrowIcon />
             </button>
           </div>
-        </div>
+        </section>
 
-        <div className="catalog-filters" role="group" aria-label="Filtrar selección oficial">
-          <button
-            className={activeFilter === "all" ? "catalog-filters__active" : ""}
-            onClick={() => setActiveFilter("all")}
-          >
-            TODOS
-          </button>
-          <button
-            className={activeFilter === "awarded" ? "catalog-filters__active" : ""}
-            onClick={() => setActiveFilter("awarded")}
-          >
-            PREMIADAS
-          </button>
-          <button
-            className={activeFilter === "mentions" ? "catalog-filters__active" : ""}
-            onClick={() => setActiveFilter("mentions")}
-          >
-            MENCIONES
-          </button>
-        </div>
+        <section className="catalog catalog--discoveries" id="avances">
+          <div className="section-heading">
+            <h2>Avances 2026</h2>
+          </div>
+          <div className="film-rail-wrap">
+            <div className="film-rail" ref={discoveriesRef}>
+              {discoveryFilms.map((film) => <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />)}
+            </div>
+            <button
+              className="rail-arrow rail-arrow--left"
+              onClick={() => moveRail(-1, discoveriesRef)}
+              aria-label="Desplazar avances hacia la izquierda"
+            >
+              <ArrowIcon backwards />
+            </button>
+            <button
+              className="rail-arrow rail-arrow--right"
+              onClick={() => moveRail(1, discoveriesRef)}
+              aria-label="Desplazar avances hacia la derecha"
+            >
+              <ArrowIcon />
+            </button>
+          </div>
+        </section>
 
-        <div className="film-rail" ref={railRef}>
-          {visibleFilms.map((film) => <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />)}
-        </div>
-      </section>
+        <section className="catalog catalog--awards" id="destacadas">
+          <div className="section-heading">
+            <h2>Ganadoras y menciones</h2>
+          </div>
+          <div className="film-rail-wrap">
+            <div className="film-rail" ref={awardsRailRef}>
+              {films.filter((film) => film.award !== null).map((film) => (
+                <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />
+              ))}
+            </div>
+            <button
+              className="rail-arrow rail-arrow--left"
+              onClick={() => moveRail(-1, awardsRailRef)}
+              aria-label="Desplazar ganadoras hacia la izquierda"
+            >
+              <ArrowIcon backwards />
+            </button>
+            <button
+              className="rail-arrow rail-arrow--right"
+              onClick={() => moveRail(1, awardsRailRef)}
+              aria-label="Desplazar ganadoras hacia la derecha"
+            >
+              <ArrowIcon />
+            </button>
+          </div>
+        </section>
+      </div>
 
       <section className="feature" id="festival">
         <div className="feature__glow" />
@@ -395,27 +605,6 @@ export default function Home() {
           <span className="feature__corner feature__corner--top" />
           <span className="feature__corner feature__corner--bottom" />
           <span className="feature__caption">CINESTRO · 2026</span>
-        </div>
-      </section>
-
-      <section className="catalog catalog--discoveries" id="avances">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow"><span /> INSERTAR TEXTO</p>
-            <h2>AVANCES <span>2026</span></h2>
-          </div>
-          <div className="section-heading__actions">
-            <span>INSERTAR TEXTO</span>
-            <button onClick={() => moveRail(-1, discoveriesRef)} aria-label="Desplazar avances hacia la izquierda">
-              <ArrowIcon backwards />
-            </button>
-            <button onClick={() => moveRail(1, discoveriesRef)} aria-label="Desplazar avances hacia la derecha">
-              <ArrowIcon />
-            </button>
-          </div>
-        </div>
-        <div className="film-rail" ref={discoveriesRef}>
-          {discoveryFilms.map((film) => <FilmCard key={film.id} film={film} onOpen={setSelectedFilm} />)}
         </div>
       </section>
 
@@ -463,6 +652,41 @@ export default function Home() {
         <span>CINE DE TERROR · 2026</span>
         <a href="#inicio">VOLVER ARRIBA ↑</a>
       </footer>
+
+      <nav className="mobile-dock" aria-label="Navegación móvil">
+        <a
+          href="#inicio"
+          className={activeSection === "inicio" ? "mobile-dock__active" : ""}
+          aria-current={activeSection === "inicio" ? "page" : undefined}
+        >
+          <HomeIcon />
+          <span>Inicio</span>
+        </a>
+        <a
+          href="#seleccion"
+          className={activeSection === "seleccion" ? "mobile-dock__active" : ""}
+          aria-current={activeSection === "seleccion" ? "page" : undefined}
+        >
+          <FilmsIcon />
+          <span>Películas</span>
+        </a>
+        <a
+          href="#festival"
+          className={activeSection === "festival" ? "mobile-dock__active" : ""}
+          aria-current={activeSection === "festival" ? "page" : undefined}
+        >
+          <FestivalIcon />
+          <span>Festival</span>
+        </a>
+        <a
+          href="#palmares"
+          className={activeSection === "palmares" ? "mobile-dock__active" : ""}
+          aria-current={activeSection === "palmares" ? "page" : undefined}
+        >
+          <TrophyIcon />
+          <span>Premios</span>
+        </a>
+      </nav>
 
       {selectedFilm ? <TrailerModal film={selectedFilm} onClose={() => setSelectedFilm(null)} /> : null}
     </main>
